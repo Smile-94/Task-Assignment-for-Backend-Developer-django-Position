@@ -1,11 +1,19 @@
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
+from rest_framework import filters
+
+# Import Generic class
+from rest_framework.generics import ListAPIView
 
 # Import Blog app Models
 from blog_app.models import BlogPost
+
+# Filter Classes
+from blog_app.filters import BlogPostFilter
 
 # Import Blog app Serializers
 from blog_app.serializers import BlogListSerializers
@@ -15,13 +23,19 @@ from blog_app.serializers import AuthorBlogDetailSerializer
 class AuthorBlogView(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,)
     queryset = BlogPost.objects.filter(is_active = True)
+
     serializer_classes = {
         'retrieve' : AuthorBlogDetailSerializer,
         'update': CreateUpdateBlogSerializers,
         'create' : CreateUpdateBlogSerializers
     }
+
     default_serializer_class = BlogListSerializers
-    lookup_field = 'id'
+
+    # Filter Classes
+    serializer_class = BlogListSerializers
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = BlogPostFilter
 
     def get_serializer_class(self):
         return self.serializer_classes.get(self.action, self.default_serializer_class)
@@ -49,6 +63,8 @@ class AuthorBlogView(viewsets.ModelViewSet):
         instance.is_active = False
         instance.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
 
     
        

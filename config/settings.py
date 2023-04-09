@@ -37,7 +37,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # My Apps
     'blog_app.apps.BlogAppConfig',
-    'blog_app.apps.BlogAppConfig',
     # Third Party Apps and Packages
     'rest_framework',
     'django_filters',
