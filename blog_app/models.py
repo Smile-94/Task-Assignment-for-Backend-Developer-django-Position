@@ -1,6 +1,10 @@
 from django.db import models
 from django.utils import timezone
 import datetime
+import re
+
+# Import Truncator to generate Summery
+from django.utils.text import Truncator
 
 # Import django defaults Models
 from django.contrib.auth import get_user_model
@@ -48,6 +52,23 @@ class BlogPost(models.Model):
         if self.status == 'published' and not self.published_date:
             self.published_date = timezone.now()
         super().save(*args, **kwargs)
+    
+    def generate_summary(self):
+        # Count words in content
+        words = re.findall(r'\w+', self.content)
+        num_words = len(words)
+        
+        # Split content into sentences
+        sentences = re.split(r'(?<!\w\.\w.)(?<![A-Z][a-z]\.)(?<=\.|\?)\s', self.content)
+        
+        # Select first five sentences of the blog post as summary
+        summary = ' '.join(sentences[:5])
+        
+        # Add '...' if summary of blog post is less than content
+        if len(summary.split()) < num_words:
+            summary += '...'
+        
+        return summary
 
     def __str__(self):
         return self.title[:30]
