@@ -13,7 +13,7 @@ from blog_app.serializers import CreateUpdateBlogSerializers
 from blog_app.serializers import AuthorBlogDetailSerializer
 
 class AuthorBlogView(viewsets.ModelViewSet):
-    # permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAuthenticated,)
     queryset = BlogPost.objects.filter(is_active = True)
     serializer_classes = {
         'retrieve' : AuthorBlogDetailSerializer,
@@ -25,18 +25,30 @@ class AuthorBlogView(viewsets.ModelViewSet):
 
     def get_serializer_class(self):
         return self.serializer_classes.get(self.action, self.default_serializer_class)
+
+    def get_queryset(self):
+        queryset = BlogPost.objects.filter(is_active=True, author=self.request.user)
+        return queryset
+
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user)
+    
+    # Only author of the blog can update the blog post
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        if instance.author != request.user:
+            return Response({'error': 'You do not have permission to perform this action.'}, status=status.HTTP_403_FORBIDDEN)
+        return super().update(request, *args, **kwargs)
     
 
     # Overwride the destroy method for soft delete, this method makes is_active=False
     def destroy(self, request, *args, **kwargs):
-        try:
-            instance = self.get_object()
-            instance.is_active = False
-            instance.save()
-            return Response(status=status.HTTP_204_NO_CONTENT)
-        except Exception as e:
-            print(e)
-        return Response({'message':'Internal Server Error'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        instance = self.get_object()
+        if instance.author != request.user:
+            return Response({'error': 'You do not have permission to perform this action.'}, status=status.HTTP_403_FORBIDDEN)
+        instance.is_active = False
+        instance.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
     
        
