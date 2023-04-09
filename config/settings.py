@@ -36,10 +36,14 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     # My Apps
-    
+    'blog_app.apps.BlogAppConfig',
     # Third Party Apps and Packages
     'rest_framework',
+<<<<<<< HEAD
     'rest_framework_simplejwt.authentication.JWTAuthentication',
+=======
+    'django_filters',
+>>>>>>> blog-app
 ]
 
 MIDDLEWARE = [
