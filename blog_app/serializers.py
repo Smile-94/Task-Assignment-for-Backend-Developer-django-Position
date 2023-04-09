@@ -42,7 +42,7 @@ class CreateUpdateBlogSerializers(serializers.ModelSerializer):
 
     class Meta:
         model = BlogPost
-        fields = ('title','author','status','category','content')
+        fields = ('title','status','category','content')
 
 
 class AuthorBlogDetailSerializer(serializers.ModelSerializer):
