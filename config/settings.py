@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     
     # Third Party Apps and Packages
     'rest_framework',
+    'rest_framework_simplejwt.authentication.JWTAuthentication',
 ]
 
 MIDDLEWARE = [
