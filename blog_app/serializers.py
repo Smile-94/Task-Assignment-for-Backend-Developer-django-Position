@@ -1,4 +1,5 @@
 from rest_framework import serializers
+import re
 
 # Import django defaults models
 from django.contrib.auth import get_user_model
@@ -28,10 +29,20 @@ class BlogListSerializers(serializers.ModelSerializer):
 
 class BlogDetailsSerializers(serializers.ModelSerializer):
     
+    summary = serializers.SerializerMethodField()
+    num_words = serializers.SerializerMethodField()
+
     class Meta:
         model = BlogPost
-        fields = ( 'id' ,'title','author','published_date','category','content')
+        fields = ( 'id' ,'title','author','published_date','category','content','summary','num_words')
     
+    def get_summary(self, obj):
+        return obj.generate_summary()
+
+    def get_num_words(self, obj):
+        words = re.findall(r'\w+', obj.content)
+        return len(words)
+
     def to_representation(self, instance):
         data = super().to_representation(instance)
         data['author']=UserDetaillSerializers(instance=instance.author).data
@@ -47,9 +58,19 @@ class CreateUpdateBlogSerializers(serializers.ModelSerializer):
 
 class AuthorBlogDetailSerializer(serializers.ModelSerializer):
 
+    summary = serializers.SerializerMethodField()
+    num_words = serializers.SerializerMethodField()
+
     class Meta:
         model = BlogPost
         fields = '__all__'
+
+    def get_summary(self, obj):
+        return obj.generate_summary()
+
+    def get_num_words(self, obj):
+        words = re.findall(r'\w+', obj.content)
+        return len(words)
     
     def to_representation(self, instance):
         data = super().to_representation(instance)
