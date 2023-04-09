@@ -13,6 +13,7 @@ app_name = 'blog_app'
 router = DefaultRouter()
 router.register(r'blogs', manage_blog.AuthorBlogView)
 
+
 # Router Urls path
 urlpatterns = [
      path('', include(router.urls)),

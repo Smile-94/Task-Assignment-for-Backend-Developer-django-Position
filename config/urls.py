@@ -2,15 +2,12 @@ from django.contrib import admin
 from django.urls import path
 from django.urls import include
 
-<<<<<<< HEAD
-=======
 # Sample JWT toke configuration setting
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
 )
 
->>>>>>> authentication
 # Apps Urls 
 from blog_app import urls as blog_urls
 
